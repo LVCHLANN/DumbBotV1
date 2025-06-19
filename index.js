@@ -74,7 +74,7 @@ client.on(Events.InteractionCreate, async interaction => {
     const format = interaction.options.getString('format');
 
     if (!isSupportedFile(file.name)) {
-        return interaction.reply({ content: '⚠️ Unsupported file type.' });
+        return interaction.reply({ content: '⚠️ Unsupported file type.', ephemeral: true });
     }
 
     await interaction.deferReply();
@@ -97,7 +97,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
     } catch (err) {
         console.error(err);
-        await interaction.editReply('❌ Conversion failed.');
+        await interaction.editReply({ content: '❌ Conversion failed.', ephemeral: true });
     }
 });
 
@@ -134,7 +134,7 @@ client.on(Events.InteractionCreate, async interaction => {
         : null;
 
     if (!replied || replied.attachments.size === 0) {
-        return interaction.reply({ content: '⚠️ No attachments found.' });
+        return interaction.reply({ content: '⚠️ No attachments found.', ephemeral: true });
     }
 
     client.cachedMessage = replied;
@@ -152,7 +152,7 @@ client.on(Events.InteractionCreate, async interaction => {
         .map(format => ({ label: format.toUpperCase(), value: format }));
 
     if (formatOptions.length === 0) {
-        return interaction.reply({ content: '⚠️ No valid conversion targets for this file.' });
+        return interaction.reply({ content: '⚠️ No valid conversion targets for this file.', ephemeral: true });
     }
 
     const row = new ActionRowBuilder().addComponents(
@@ -164,7 +164,8 @@ client.on(Events.InteractionCreate, async interaction => {
 
     await interaction.reply({
         content: '🎯 Choose output format for conversion:',
-        components: [row]
+        components: [row],
+        ephemeral: true
     });
 });
 
@@ -175,10 +176,10 @@ client.on(Events.InteractionCreate, async interaction => {
     const original = client.cachedMessage;
 
     if (!original || original.attachments.size === 0) {
-        return interaction.update({ content: '⚠️ No valid files found.', components: [] });
+        return interaction.update({ content: '⚠️ No valid files found.', components: [], ephemeral: true });
     }
 
-    await interaction.update({ content: `⏳ Converting file(s) to **.${format}**...`, components: [] });
+    await interaction.update({ content: `⏳ Converting file(s) to **.${format}**...`, components: [], ephemeral: true });
 
     try {
         const results = [];
@@ -196,7 +197,7 @@ client.on(Events.InteractionCreate, async interaction => {
         }
 
         if (results.length === 0) {
-            return interaction.followUp({ content: '⚠️ No valid files to convert.' });
+            return interaction.followUp({ content: '⚠️ No valid files to convert.', ephemeral: true });
         }
 
         const reply = await interaction.followUp({
@@ -215,7 +216,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
     } catch (err) {
         console.error(err);
-        await interaction.followUp({ content: '❌ Failed to convert file(s).' });
+        await interaction.followUp({ content: '❌ Failed to convert file(s).', ephemeral: true });
     }
 });
 
