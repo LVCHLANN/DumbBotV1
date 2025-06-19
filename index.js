@@ -3,10 +3,11 @@ const {
     EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle,
     StringSelectMenuBuilder, AttachmentBuilder, Events
 } = require('discord.js');
-const { downloadFile, isSupportedFile, getFileType } = require('./utils');
+const { downloadFile, isSupportedFile, getFileType, deleteFiles } = require('./utils');
 const { convertToImage } = require('./convert');
 const path = require('path');
 require('dotenv').config();
+const fs = require('fs');
 
 const client = new Client({
     intents: [
@@ -77,9 +78,9 @@ client.on(Events.InteractionCreate, async interaction => {
         });
 
         const links = [...reply.attachments.values()].map(a => a.url).join('\n');
-        await interaction.followUp({
-            content: '```' + links + '```'
-        });
+        await interaction.followUp({ content: '```' + links + '```' });
+
+        deleteFiles([localPath, ...outputs]);
 
     } catch (err) {
         console.error(err);
@@ -169,6 +170,7 @@ client.on(Events.InteractionCreate, async interaction => {
     try {
         const results = [];
         const cdnLinks = [];
+        const tempFiles = [];
 
         for (const [, attachment] of original.attachments) {
             if (!isSupportedFile(attachment.name)) continue;
@@ -177,6 +179,7 @@ client.on(Events.InteractionCreate, async interaction => {
             const outputs = await convertToImage(localPath, format);
 
             outputs.forEach(p => results.push(new AttachmentBuilder(p)));
+            tempFiles.push(localPath, ...outputs);
         }
 
         if (results.length === 0) {
@@ -193,9 +196,9 @@ client.on(Events.InteractionCreate, async interaction => {
             reply.attachments.forEach(a => cdnLinks.push(a.url));
         }
 
-        await interaction.followUp({
-            content: '```' + cdnLinks.join('\n') + '```'
-        });
+        await interaction.followUp({ content: '```' + cdnLinks.join('\n') + '```' });
+
+        deleteFiles(tempFiles);
 
     } catch (err) {
         console.error(err);

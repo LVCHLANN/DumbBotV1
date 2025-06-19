@@ -73,3 +73,5 @@ ehthumbs.db
 # Windows
 # Thumbs.db for Windows image previews.
 Thumbs.db
+
+temp/

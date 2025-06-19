@@ -15,11 +15,13 @@ const supportedExtensions = {
 const allSupported = Object.values(supportedExtensions).flat();
 
 /**
- * Generate a unique temporary filename with extension
+ * Generate a unique temporary filename with extension inside ./temp
  */
 function getTempFilename(ext) {
+    const tempDir = path.join(__dirname, 'temp');
+    if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir);
     const id = crypto.randomBytes(6).toString('hex');
-    return path.join(__dirname, `temp_${id}.${ext}`);
+    return path.join(tempDir, `temp_${id}.${ext}`);
 }
 
 /**
@@ -62,9 +64,23 @@ function getFileType(filename) {
     return 'unsupported';
 }
 
+/**
+ * Delete an array of file paths
+ */
+function deleteFiles(files) {
+    for (const file of files) {
+        try {
+            fs.unlinkSync(file);
+        } catch (err) {
+            console.warn(`⚠️ Failed to delete ${file}: ${err.message}`);
+        }
+    }
+}
+
 module.exports = {
     getTempFilename,
     downloadFile,
     isSupportedFile,
-    getFileType
+    getFileType,
+    deleteFiles
 };
