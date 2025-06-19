@@ -6,8 +6,22 @@ const {
 const { downloadFile, isSupportedFile, getFileType, deleteFiles } = require('./utils');
 const { convertToImage } = require('./convert');
 const path = require('path');
-require('dotenv').config();
 const fs = require('fs');
+require('dotenv').config();
+
+// 🧹 Cleanup old temp files
+const tempDir = path.join(__dirname, 'temp');
+if (fs.existsSync(tempDir)) {
+    fs.readdirSync(tempDir).forEach(file => {
+        const fullPath = path.join(tempDir, file);
+        try {
+            fs.unlinkSync(fullPath);
+            console.log(`🧹 Auto-deleted leftover: ${fullPath}`);
+        } catch (e) {
+            console.warn(`❌ Failed to delete ${fullPath}: ${e.message}`);
+        }
+    });
+}
 
 const client = new Client({
     intents: [
@@ -37,7 +51,6 @@ client.once('ready', async () => {
                     { name: 'PNG', value: 'png' },
                     { name: 'JPG', value: 'jpg' },
                     { name: 'WEBP', value: 'webp' },
-                    { name: 'BMP', value: 'bmp' },
                     { name: 'TIFF', value: 'tiff' },
                     { name: 'AVIF', value: 'avif' }
                 )
@@ -126,7 +139,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
     client.cachedMessage = replied;
 
-    const allFormats = ['gif', 'png', 'jpg', 'webp', 'bmp', 'tiff', 'avif'];
+    const allFormats = ['gif', 'png', 'jpg', 'webp', 'tiff', 'avif'];
     const excludedFormats = new Set();
 
     for (const [, attachment] of replied.attachments) {
