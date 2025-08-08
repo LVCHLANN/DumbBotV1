@@ -1,20 +1,21 @@
 {
-  "name": "filelinkbot",
-  "version": "1.0.0",
-  "description": "Look's at specific Discord channel, when supported files are uploaded, replies with direct link",
-  "homepage": "https://github.com/LVCHLANN/FileLinkBot#readme",
+  "name": "dumb-bot",
+  "version": "2.0.0",
+  "description": "A general-purpose Discord bot with file tools, media conversion, and utility commands.",
+  "homepage": "https://github.com/LVCHLANN/DumbBot#readme",
   "bugs": {
-    "url": "https://github.com/LVCHLANN/FileLinkBot/issues"
+    "url": "https://github.com/LVCHLANN/DumbBot/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LVCHLANN/FileLinkBot.git"
+    "url": "git+https://github.com/LVCHLANN/DumbBot.git"
   },
   "license": "ISC",
   "author": "Lachlan Scott",
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
